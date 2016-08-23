@@ -13,7 +13,7 @@ var TASK_INTERVAL = 24 * 3600 * 1000 / 20; //任务循环，默认一天20次
 var SERVER_UPDATE_INTERVAL = 24 * 3600 * 1000 //从服务器上主动更新逻辑数据，默认一天一次
 var CHIP_DATA = {};//全局公用数据，需要存localstorage
 var TASK_DATA = {TIMES:0,TIME_START:0,TIME_END:0};//全局任务数据，需要存localstorage
-var SIGN_SERVER_PREFIX = "https://rawgit.com/kundy/sign/master/";
+var SIGN_SERVER_PREFIX = "https://rawgit.com/greyair/sign/master/";
 var TASK_TIMEOUT = 30 * 1000 ; //单个任务超时时间，30秒
 
 //测试环境本地化
