@@ -10,20 +10,28 @@ console.log("[LOAD data.js] 2016041201 ");
 
 
 //任务列表
-if(TASK_LIST)TASK_LIST = ["LIFEVC"];
-if(TASK_LIST)TASK_LIST = ['JD_JDOU','JD_CHOUMA','ETAO',"VIP_QQ","BAIDU_WENKU","XUNLEI_DAKA","LIANTONG","XIAMI","LIFEVC",];
+if(TASK_LIST)TASK_LIST = ["JD_VIP","JD_JR","JD_CHOUMA","JD_MOBILE"];
+//if(TASK_LIST)TASK_LIST = ["JD_VIP","JD_JR","JD_CHOUMA","ETAO","VIP_QQ","BAIDU_WENKU","XUNLEI_DAKA","LIANTONG","XIAMI","LIFEVC","PINGAN"];
 
 
 //页面嵌入脚本列表
 //第三个参数为1时为精准匹配，为0 时为模糊匹配
 if(URL_LIST)URL_LIST = [
+	//京东会员
+	["http://vip.jd.com/","jd/vip_jd.js",1],
+
     //京东金融
-    ["http://vip.jr.jd.com/","jd/vip_jr_jd.js",1],//京东金融页
-    ["http://pingce.jd.com/funding/usercenter.action","jd/usercenter.action.js",1],//京东金融-我的筹码页
-    ["http://trade-z.jd.com/funding/mychip.action","jd/mychip.action.js",1],//京东金融-签到页
+    ["http://vip.jr.jd.com/","jd/jr_jd.js",1],//京东金融页
+
+    //京东筹码
+    ["http://pingce.jd.com/funding/usercenter.action","jd/pingce_jd.js",1],//京东金融-我的筹码页
+    ["http://trade-z.jd.com/funding/mychip.action","jd/chouma_jd.js",1],//京东金融-签到页
 
     //京东京豆
-    ["http://bean.jd.com/myJingBean/list","jd/myJingBean_list.js",1],//我的京豆页
+    ["http://bean.jd.com/myJingBean/list","jd/bean_jd.js",1],//我的京豆页
+
+	//京东移动端
+    ["http://ld.m.jd.com/userBeanHomePage/getLoginUserBean.action","jd/m_jd.js",1],//京豆手机签到
     
     //etao-淘金币
     ["http://www.etao.com/","taobao/etao.js",1],//etao主页
@@ -69,29 +77,45 @@ if(HANDLE_MSG)HANDLE_MSG = function(msg){
         case "JD":
             switch(msg.name)
             {
+                case "vip_jd_click":
+                    CHIP_DATA["JD_VIP"].auth = 1;
+                    CHIP_DATA["JD_VIP"].today = msg.sign;   
+					CHIP_DATA["JD_VIP"].id = msg.id;
+                    break;
+                case "jr_jd_click"://今天金融签到成功
+                    CHIP_DATA["JD_JR"].auth = 1;
+                    CHIP_DATA["JD_JR"].today = msg.sign;				
+					CHIP_DATA["JD_JR"].id = msg.id;       
+                    break;
+				case "m_jd_click":
+					CHIP_DATA["JD_MOBILE"].auth = 1;
+                    CHIP_DATA["JD_MOBILE"].today = msg.sign;
+					CHIP_DATA["JD_MOBILE"].id = msg.id;
+                    break;
+                case "chouma_click"://筹码签到成功
+					CHIP_DATA["JD_CHOUMA"].auth = 1;
+                    CHIP_DATA["JD_CHOUMA"].today = msg.sign;
+                    CHIP_DATA["JD_CHOUMA"].id = msg.id;
+                    break;
                 case "chouma_num"://筹码数量
-                    CHIP_DATA["JD_CHOUMA"].num = msg.data;
-                    break;
-                case "chouma_click"://筹码按钮点击
-                    CHIP_DATA["JD_CHOUMA"].today = 1;
-                    CHIP_DATA["JD_CHOUMA"].task.finish();
-                    break;
-                case "vip_jr_jd_click"://今天签到成功
-                    CHIP_DATA["JD_JDOU"].today = 1;
-                    CHIP_DATA["JD_JDOU"].total++;
-                    break;
-                case "vip_jr_jd_clicked"://今日已签到过
-                    CHIP_DATA["JD_JDOU"].today = 1;
-                    break;
-                case "user_name"://用户名
-                    CHIP_DATA["JD_JDOU"].auth = 1;
-                    CHIP_DATA["JD_JDOU"].id = msg.data;
-                    CHIP_DATA["JD_CHOUMA"].auth = 1;
-                    CHIP_DATA["JD_CHOUMA"].id = msg.data;
+                    CHIP_DATA["JD_CHOUMA"].num = msg.num;
+					CHIP_DATA["JD_CHOUMA"].total = msg.total; 
+					CHIP_DATA["JD_CHOUMA"].task.finish();
                     break;
                 case "jd_num"://京豆
-                    CHIP_DATA["JD_JDOU"].num = msg.data;
-                    CHIP_DATA["JD_JDOU"].task.finish();
+					if(msg.task.indexOf("vip.jr.jd.com")>-1){
+                        CHIP_DATA["JD_JR"].num = msg.num;
+                        CHIP_DATA["JD_JR"].total = msg.total;
+                        CHIP_DATA["JD_JR"].task.finish();
+                    }else if(msg.task.indexOf("vip.jd.com")>-1){
+                        CHIP_DATA["JD_VIP"].num = msg.num;
+                        CHIP_DATA["JD_VIP"].total = msg.total;
+					    CHIP_DATA["JD_VIP"].task.finish();
+                    }else if(msg.task.indexOf("m.jd.com")>-1){
+                        CHIP_DATA["JD_MOBILE"].num = msg.num;
+                        CHIP_DATA["JD_MOBILE"].total = msg.total;
+					    CHIP_DATA["JD_MOBILE"].task.finish();
+                    }
                     break;
                 default:
                     break;
@@ -298,96 +322,4 @@ if(HANDLE_MSG)HANDLE_MSG = function(msg){
         default:
             break;
     }
-
-    // if(msg.type == "JD"){
-    //     if(msg.name == "chouma_num"){//筹码数量
-    //         CHIP_DATA["JD_CHOUMA"].num = msg.data;
-    //     }
-    //     else if(msg.name == "chouma_click"){//筹码按钮点击
-    //         CHIP_DATA["JD_CHOUMA"].today = 1;
-    //         CHIP_DATA["JD_CHOUMA"].task.finish();
-    //     }
-    //     else if(msg.name == "vip_jr_jd_click"){//今天签到成功
-    //         CHIP_DATA["JD_JDOU"].today = 1;
-    //         CHIP_DATA["JD_JDOU"].total++;
-            
-    //     }
-    //     else if(msg.name == "vip_jr_jd_clicked"){//今日已签到过
-    //         CHIP_DATA["JD_JDOU"].today = 1;
-    //     }
-    //     else if(msg.name == "user_name"){//用户名
-    //         CHIP_DATA["JD_JDOU"].auth = 1;
-    //         CHIP_DATA["JD_JDOU"].id = msg.data;
-    //         CHIP_DATA["JD_CHOUMA"].auth = 1;
-    //         CHIP_DATA["JD_CHOUMA"].id = msg.data;
-    //     }
-    //     else if(msg.name == "jd_num"){//京豆
-    //         CHIP_DATA["JD_JDOU"].num = msg.data;
-    //         CHIP_DATA["JD_JDOU"].task.finish();
-    //     }
-    // }
-
-    // else if(msg.type == "ETAO"){
-    //     if(msg.name == "login"){
-    //         if(msg.data==""){//未登录
-    //             CHIP_DATA["ETAO"].auth = 0;
-    //             CHIP_DATA["ETAO"].task.finish();
-    //         }
-    //         else{//已登录
-    //             CHIP_DATA["ETAO"].auth = 1;
-    //             CHIP_DATA["ETAO"].id = msg.data;
-    //         }
-            
-    //     }
-    //     else if(msg.name == "sign_click"){//签到成功
-    //         CHIP_DATA["ETAO"].today=1;
-    //     }
-    //     else if(msg.name == "coin_num"){//淘金币数量
-    //         CHIP_DATA["ETAO"].num = msg.data;
-    //         CHIP_DATA["ETAO"].task.finish();
-    //     }
-    // }
-
-    // else if(msg.type == "VIP_QQ"){
-    //     if(msg.name == "user_name"){
-    //         if(msg.data==""){//未登录
-    //             CHIP_DATA["VIP_QQ"].auth = 0;
-    //             CHIP_DATA["VIP_QQ"].task.finish();
-    //         }
-    //         else{//已登录
-    //             CHIP_DATA["VIP_QQ"].auth = 1;
-    //             CHIP_DATA["VIP_QQ"].id = msg.data;
-    //         }
-            
-    //     }
-    //     else if(msg.name == "sign_click"){//签到成功
-    //         CHIP_DATA["VIP_QQ"].today=1;
-    //     }
-    //     else if(msg.name == "credit_num"){//淘金币数量
-    //         CHIP_DATA["VIP_QQ"].num = msg.data;
-    //         CHIP_DATA["VIP_QQ"].task.finish();
-    //     }
-    // }
-
-    // else if(msg.type == "BAIDU_WENKU"){
-    //     if(msg.name == "user_name"){
-    //         if(msg.data==""){//未登录
-    //             CHIP_DATA["BAIDU_WENKU"].auth = 0;
-    //             CHIP_DATA["BAIDU_WENKU"].task.finish();
-    //         }
-    //         else{//已登录
-    //             CHIP_DATA["BAIDU_WENKU"].auth = 1;
-    //             CHIP_DATA["BAIDU_WENKU"].id = msg.data;
-    //         }
-            
-    //     }
-    //     else if(msg.name == "sign_click"){//签到成功
-    //         CHIP_DATA["BAIDU_WENKU"].today=1;
-    //     }
-    //     else if(msg.name == "credit_num"){//淘金币数量
-    //         CHIP_DATA["BAIDU_WENKU"].num = msg.data;
-    //         CHIP_DATA["BAIDU_WENKU"].task.finish();
-    //     }
-    // }
-
 }

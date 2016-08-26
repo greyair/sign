@@ -64,7 +64,7 @@ body{width:600px;min-height:420px;overflow:hidden;padding-top:15px;background:#e
 .popup .remark{color:#aaa;font-size:12px;display:block;cursor:pointer;line-height:14px;margin-top:5px;}
 .popup .id{margin-top:10px;}
 .popup span.title{display:inline-block;width:50px;text-align: left;}
-.popup .checkbox{display:block;margin-top:20px;margin-left:60px;}
+.popup .checkbox{display:block;margin-top:20px;margin-left:90px;}
 
 
 .chip-task{position:absolute;bottom:0;left:10px;}

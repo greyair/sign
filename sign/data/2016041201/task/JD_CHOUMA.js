@@ -1,5 +1,6 @@
 (function(){
 
+
 //初始定义
 var NAME='JD_CHOUMA';
 if(!CHIP_DATA[NAME]){
@@ -14,16 +15,17 @@ if(!CHIP_DATA[NAME]){
         num:-1,//当前筹码数量
         numUrl:"http://pingce.jd.com/funding/usercenter.action",
         total:0,//领取的累积数量
-        status:1,
-        visable:1,
+        status:1, 
         step:0,//状态：0初始值  1准备 2任务进行中 3完成
+		visable:1,
         task:{}
     }
 }
-
+console.log("load "+NAME+".js")
 
 
 var IFRAME = $("#iframe")[0];
+
 
 function task(fun){
     console.log("[task start]****** name:"+NAME)
@@ -63,12 +65,12 @@ task.check_login=function(){
      //先检查登录态是否正常
     checkUrlredirect("http://home.jd.com/",function(t){
         if(t==1){
-            console.log("[TASK_JD_JDOU] login ok")
+            console.log("[TASK_"+NAME+"] login ok")
             CHIP_DATA[NAME].auth = 1;
             task.open_index();
         }
         else{
-            console.log("[TASK_JD_JDOU] login fail")
+            console.log("[TASK_"+NAME+"] login fail")
             CHIP_DATA[NAME].auth = 0;
             CHIP_DATA[NAME].id = "";
             task.finish();

@@ -27,10 +27,12 @@ function init(){
  	$('.ui.checkbox').checkbox({
 		onChecked: function() {
 			console.log("onChecked")
+			$('.ui.checkbox label').text('启用');
 			task_set($(".popup").attr("data-item"),1)
 		},
 		onUnchecked: function() {
 			console.log("onUnchecked")
+			$('.ui.checkbox label').text('禁用');
 			task_set($(".popup").attr("data-item"),0)
 		}
 	});
@@ -130,13 +132,17 @@ function pageRefresh(){
 						iconStyle="warning sign";
 					}
 					else{
-						if(CHIP_DATA[item].today===0){//今天还未签到
-							themeColor="pink"
-							iconStyle="wait";
-						}
-						else{//今天已签到
+						if(CHIP_DATA[item].today==0){//今天已签到
 							themeColor="green"
 							iconStyle="checkmark";
+						}
+						else if(CHIP_DATA[item].today==1){//签到成功
+							themeColor="green"
+							iconStyle="checkmark";
+						}
+						else{// if(CHIP_DATA[item].today==-1){//今天还未签到
+							themeColor="pink"
+							iconStyle="wait";
 						}
 					}
 				}
@@ -176,17 +182,24 @@ function pageRefresh(){
 		//状态
 		var status = "";
 		if(CHIP_DATA[item].auth!=1){
-			var status = '<a target="_blank" href="'+CHIP_DATA[item].idUrl+'" style="color:#f00;font-size:12px;">签到失败，请先登录</a>';
+			status = '<a target="_blank" href="'+CHIP_DATA[item].idUrl+'" style="color:#f00;font-size:12px;">签到失败，请先登录</a>';
 		}
-		else if(CHIP_DATA[item].today!=1){
-			status = '<span style="color:#f00">今天还未签到</span>';
+		else if(CHIP_DATA[item].today==0){
+			status = '<span style="color:#21BA45">今天已签到</span>';
+		}
+		else if(CHIP_DATA[item].today==1){
+			status = '<span style="color:#21BA45">今天签到成功</span>';
 		}
 		else{
-			status = '<span style="color:#21BA45">今天已签</span>';
+			status = '<span style="color:#f00">今天还未签到</span>';
 		}
 
-		$('.ui.checkbox').checkbox('set unchecked')
-		if(CHIP_DATA[item].status == 1)$('.ui.checkbox').checkbox('set checked')
+		$('.ui.checkbox').checkbox('set unchecked');
+		$('.ui.checkbox label').text('禁用');
+		if(CHIP_DATA[item].status == 1){
+			$('.ui.checkbox').checkbox('set checked');
+			$('.ui.checkbox label').text('启用');
+		}
 
 		$(".popup").attr("data-item",item);
 		$(".popup .name").text(CHIP_DATA[item].name);
@@ -225,7 +238,7 @@ function pageRefresh(){
 function taskRefresh(){
 
 	var html="";
-	var task_times = TASK_DATA.TIMES;
+	var task_times = TASK_DATA.ALLTIMES;
 	var task_end = TASK_DATA.TIME_END;
 
 	var task_last_str = "上次执行时间：";

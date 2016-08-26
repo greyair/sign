@@ -2,7 +2,7 @@
    "name": "天天签到",
    "short_name": "sign",
    "default_locale": "zh_CN",
-   "version":"1.0.1",
+   "version":"2.0.0",
    "icons": {
       "19": "icons/logo_19.png",
       "48": "icons/logo_48.png",

@@ -1,9 +1,10 @@
 /*
  * Copy Right: tonytony.club
- * Comments: 适用于 http://trade-z.jd.com/funding/mychip.action
+ * Comments: 适用于 http://pingce.jd.com/funding/usercenter.action
  * Author: kundy
  * Date: 2016-04-21
  */
+
 
 
 
@@ -18,32 +19,22 @@ setTimeout(init,500);
 
 
 
-
 function init(){
-	console.log("[usercenter.action.js start]");
-    var msg;
-    JD_mychip_action();
+	console.log("[pingce_jd.js start]");
+    JD_usercenter_action();
 }
 
 
-function JD_mychip_action(){
+function JD_usercenter_action(){
+
 	//延时打开 抢筹码页面
 	$(".chouma_box a").attr("target","_self");
-	if($(".banner-container button.btn").length>0)
-		click_btn($(".banner-container button.btn")[0])
-
-	
-	setTimeout(function(){
-		//通知已点击
-		var msg = {type:"JD",name:"chouma_click",data:""};
-		post_parent(msg);
-
-		
-	},2000)
-	
-	
+	if($(".chouma_box a").length>0){
+		setTimeout(function(){
+			click_btn($(".chouma_box a")[0]);
+		},1000)
+	}
 }
-
 
 
 function click_btn(obj){

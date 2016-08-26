@@ -21,10 +21,11 @@ if(!CHIP_DATA[NAME]){
         task:{}
     }
 }
-
+console.log("load "+NAME+".js")
 
 
 var IFRAME = $("#iframe")[0];    
+
 
 function task(fun){
     console.log("[task start]****** name:"+NAME)

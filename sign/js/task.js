@@ -13,8 +13,8 @@ var TASK_TIMEOUT_ID;
 TASK.list = [];
 TASK.init=function()
 {
-    TASK.TIMES = 0;//任务执行次数
-    TASK.TIME_START = 0;//任务开始时间
+    TASK.TODAYTIMES = 0;//任务今天执行次数
+	TASK.ALLTIMES = 0;//任务所有执行次数
     TASK.TIME_END = 0;//任务结束时间
     TASK.TASK_INDEX = 0;//任务序号
     TASK.RUN_FLAG = 0;//任务是否正常执行
@@ -78,7 +78,7 @@ TASK.finish=function()
     TASK.RUN_FLAG = 0;
     TASK.TIME_END = Date.parse(new Date()); 
     TASK.TASK_INDEX=0;
-    TASK.TIMES++;
+    TASK.ALLTIMES++;
     TASK.END_CB();
 }
 

@@ -1,23 +1,23 @@
-
 (function(){
 
+
 //初始定义
-var NAME='ETAO';
+var NAME='JD_VIP';
 if(!CHIP_DATA[NAME]){
     CHIP_DATA[NAME]={
-        name:"淘宝-淘金币",
-        remark:"淘金币可以进行抽奖、秒杀、兑换超值物品等。100淘金币=￥1.00",
-        remarkUrl:"https://taojinbi.bbs.taobao.com/detail.html?postId=2784790",
+        name:"京东-会员",
+        remark:"京豆可直接用于支付京东网站订单，连续签到3天领礼包 ",
+        remarkUrl:"http://vip.jd.com/",
         id:"",
-        idUrl:"http://i.etao.com/level/user_level.html",
+        idUrl:"http://vip.jd.com/",
         auth:-1,//是否登录
         today:0,//今天是否抢
         num:-1,//当前筹码数量
-        numUrl:"https://taojinbi.taobao.com/coin/userCoinDetail.htm",
+        numUrl:"http://bean.jd.com/myJingBean/list",
         total:0,//领取的累积数量
-        visable:1,
-        status:1,
+        status:1,//0禁止使用，1正常使用
         step:0,//状态：0初始值  1准备 2任务进行中 3完成
+        visable:1,
         task:{}
     }
 }
@@ -31,8 +31,9 @@ function task(fun){
     console.log("[task start]****** name:"+NAME)
     task.end_cb = fun;
     task.start();
-
 }
+
+
 
 //任务开始
 task.start=function(){
@@ -42,7 +43,7 @@ task.start=function(){
     }
     else{
         CHIP_DATA[NAME].step = 2;
-        task.open_index();
+        task.check_login();
     }
 }
 
@@ -50,7 +51,6 @@ task.start=function(){
 task.timeout=function(){
     CHIP_DATA[NAME].step = 3;
 }
-
 //任务结束
 task.finish=function(){
     console.log("[task.finish]***")
@@ -60,10 +60,29 @@ task.finish=function(){
 }
 
 //检查登录
-task.open_index=function(){
-    console.log("[task.step_check_login]")
+task.check_login=function(){
+    console.log("[task.check_login]")
      //先检查登录态是否正常
-    IFRAME.src="http://www.etao.com/";
+    checkUrlredirect("http://home.jd.com/",function(t){
+        if(t==1){
+            console.log("[TASK_"+NAME+"] login ok")
+            CHIP_DATA[NAME].auth = 1;
+            task.open_index();
+        }
+        else{
+            console.log("[TASK_"+NAME+"] login fail")
+            CHIP_DATA[NAME].auth = 0;
+            task.finish();
+        }
+    })
+}
+
+
+
+//打开用户个人中心页
+task.open_index=function(){
+    console.log("[task.open_index]")
+    IFRAME.src="http://vip.jd.com/";
 }
 
 

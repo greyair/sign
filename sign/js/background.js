@@ -9,15 +9,16 @@
 var ENV = "DEBUG";
 ENV = "RELEASE";
 
-var TASK_INTERVAL = 24 * 3600 * 1000 / 20; //任务循环，默认一天20次
+var TASK_INTERVAL = 24 * 3600 * 1000 / 3; //任务循环，默认一天3次
 var SERVER_UPDATE_INTERVAL = 24 * 3600 * 1000 //从服务器上主动更新逻辑数据，默认一天一次
 var CHIP_DATA = {};//全局公用数据，需要存localstorage
-var TASK_DATA = {TIMES:0,TIME_START:0,TIME_END:0};//全局任务数据，需要存localstorage
-var SIGN_SERVER_PREFIX = "https://rawgit.com/greyair/sign/master/";
+var TASK_DATA = {TODAYTIMES:0,ALLTIMES:0,TIME_START:0,TIME_END:0};//全局任务数据，需要存localstorage
+var SIGN_SERVER_PREFIX = "https://rawgit.com/greyair/sign/master/sign/data/";
 var TASK_TIMEOUT = 30 * 1000 ; //单个任务超时时间，30秒
 
 //测试环境本地化
-if(ENV=="DEBUG")SIGN_SERVER_PREFIX = "https://localhost/GitHub/sign/";
+if(ENV=="DEBUG")SIGN_SERVER_PREFIX = "http://localhost/data/";
+
 
 //此处数据需要在服务器上进行更新
 var TASK_LIST=[];
@@ -44,7 +45,7 @@ $(document).ready(function(){
 var VERSION_FAILED_TIMES = 0;
 function version_init(handle_flag){
     if(!handle_flag)handle_flag=0;
-    var version_src = SIGN_SERVER_PREFIX+"sign/data/version.txt?"+Math.floor(Math.random()*1000000);
+    var version_src = SIGN_SERVER_PREFIX+"version.txt?"+Math.floor(Math.random()*1000000);
     getData(version_src,function(t){
         VERSION_FAILED_TIMES=0;
         version_check(t,handle_flag);
@@ -89,7 +90,8 @@ function version_data_load(t){
         }
     })
     
-    var version_data_url = SIGN_SERVER_PREFIX+"sign/data/"+VERSION+"/data.js";
+    var version_data_url = SIGN_SERVER_PREFIX+VERSION+"/data.js";
+	if(ENV=="DEBUG") version_data_url = "data/"+VERSION+"/data.js";
     var body  = document.getElementsByTagName('body')[0]; 
     var script= document.createElement("script"); 
     script.type = "text/javascript"; 
@@ -143,7 +145,8 @@ function task_init(){
     TASK.init();
     TASK.TASK_INTERVAL = TASK_INTERVAL;
     TASK.TASK_TIMEOUT = TASK_TIMEOUT;
-    TASK.TIMES = TASK_DATA.TIMES;//任务执行次数
+    TASK.TODAYTIMES = TASK_DATA.TODAYTIMES;//任务今天执行次数
+	TASK.ALLTIMES = TASK_DATA.ALLTIMES;//任务所有执行次数
     TASK.TIME_START = TASK_DATA.TIME_START;//任务开始时间
     TASK.TIME_END = TASK_DATA.TIME_END;//任务结束时间
     TASK.START_CB = task_start_cb;//任务开始回调
@@ -171,7 +174,8 @@ function task_load(taskId){
     var script= document.createElement("script"); 
     script.type = "text/javascript"; 
     script.setAttribute("data-version",VERSION);   
-    script.src= SIGN_SERVER_PREFIX+"sign/data/"+VERSION+"/task/"+taskId+".js"; 
+    script.src= SIGN_SERVER_PREFIX+VERSION+"/task/"+taskId+".js"; 
+	if(ENV=="DEBUG")script.src= "data/"+VERSION+"/task/"+taskId+".js"; 
     script.onload=function(){
         TASK.reg(CHIP_DATA[taskId].task);
         task_reg();
@@ -212,7 +216,8 @@ function task_start_cb(){
 function task_finish_cb(){
     data_save("CHIP_DATA",CHIP_DATA);
     TASK_DATA = {
-        TIMES:          TASK.TIMES,
+		TODAYTIMES:       TASK.TODAYTIMES,
+        ALLTIMES:       TASK.ALLTIMES,
         TIME_START:     TASK.TIME_START,
         TIME_END:       TASK.TIME_END
     };
@@ -231,12 +236,12 @@ function handle_url(url){
         //第三个参数为1时为精准匹配，为0 时为模糊匹配
         if(URL_LIST[i][2]==1){
             if(url == URL_LIST[i][0]){//精准匹配
-                 iframe_insert_script( SIGN_SERVER_PREFIX + "sign/data/"+VERSION+"/pt/"+URL_LIST[i][1] )
+					iframe_insert_script( SIGN_SERVER_PREFIX +VERSION+"/pt/"+URL_LIST[i][1]+"?"+Math.floor(Math.random()*1000000) )
             }
         }
         else{
             if(url.indexOf(URL_LIST[i][0]) > -1 ){//模糊匹配
-                 iframe_insert_script( SIGN_SERVER_PREFIX + "sign/data/"+VERSION+"/pt/"+URL_LIST[i][1] )
+					iframe_insert_script( SIGN_SERVER_PREFIX +VERSION+"/pt/"+URL_LIST[i][1]+"?"+Math.floor(Math.random()*1000000) )
             }
         }
         

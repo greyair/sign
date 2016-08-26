@@ -1,6 +1,6 @@
 /*
  * Copy Right: tonytony.club
- * Comments: 适用于 http://trade-z.jd.com/funding/mychip.action
+ * Comments: 适用于 
  * Author: kundy
  * Date: 2016-04-21
  */

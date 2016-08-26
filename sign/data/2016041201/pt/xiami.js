@@ -1,6 +1,6 @@
 /*
  * Copy Right: tonytony.club
- * Comments: 适用于 http://vip.xunlei.com/index.html
+ * Comments: 适用于 http://www.xiami.com/account
  * Author: kundy
  * Date: 2016-04-21
  */
