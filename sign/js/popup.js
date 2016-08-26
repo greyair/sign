@@ -206,6 +206,7 @@ function pageRefresh(){
 		$(".popup .remark").text(CHIP_DATA[item].remark);
 		$(".popup #id").text(CHIP_DATA[item].id);
 		$(".popup #num").text(num);
+		$(".popup #total").text(CHIP_DATA[item].total);
 		$(".popup #status").html(status);
 
 
